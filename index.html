@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opcode Analytics</title>
+    <title>Opcode Analytics V.1</title>
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -38,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #1e293b; }
@@ -86,7 +86,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = 'opcode-dashboard-persistent-v1'; // Locked ID
+        const appId = 'opcode-dashboard-persistent-v1'; // Locked ID for consistency
 
         window.fbAuth = auth;
         window.fbDb = db;
@@ -120,7 +120,10 @@
             Home: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>,
             MapPin: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
             Filter: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>,
-            Info: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Info: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>,
+            TrendingUp: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>,
+            TrendingDown: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>,
+            Minus: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         };
 
         // --- COMPONENTS ---
@@ -129,33 +132,72 @@
             
             if (isReference) {
                 return (
-                    <div className="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-slate-900 text-white border border-slate-700 shadow-sm min-w-[52px]">
+                    <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-900 text-white border border-slate-700 shadow-sm min-w-[48px]">
                         {value}
                     </div>
                 );
             }
 
             const num = parseFloat(value);
-            let bgClass = "bg-slate-50 text-slate-500 border-slate-200", dotClass = "bg-slate-400";
-            if (num >= 98) { bgClass = "bg-emerald-50 text-emerald-700 border-emerald-200"; dotClass = "bg-emerald-500"; } 
-            else if (num < 95) { bgClass = "bg-rose-50 text-rose-700 border-rose-200"; dotClass = "bg-rose-500"; } 
-            else { bgClass = "bg-amber-50 text-amber-700 border-amber-200"; dotClass = "bg-amber-500"; }
+            let bgClass = "bg-slate-100 text-slate-500", dotClass = "bg-slate-400";
+            if (num >= 98) { bgClass = "bg-emerald-50 text-emerald-700 border border-emerald-100"; dotClass = "bg-emerald-500"; } 
+            else if (num < 95) { bgClass = "bg-rose-50 text-rose-700 border border-rose-100"; dotClass = "bg-rose-500"; } 
+            else { bgClass = "bg-amber-50 text-amber-700 border border-amber-100"; dotClass = "bg-amber-500"; }
             
             return (
-                <div className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold border ${bgClass}`}>
+                <div className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${bgClass} shadow-sm`}>
                     <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${dotClass}`}></span>{value}
                 </div>
             );
         };
 
-        const KPICard = ({ title, value, icon: Icon, color }) => {
-            const colors = { blue: "from-blue-500 to-blue-600", indigo: "from-indigo-500 to-indigo-600", emerald: "from-emerald-500 to-emerald-600", purple: "from-purple-500 to-purple-600" };
-            const shadow = { blue: "shadow-blue-500/20", indigo: "shadow-indigo-500/20", emerald: "shadow-emerald-500/20", purple: "shadow-purple-500/20" };
+        const KPICard = ({ title, value, prevValue, icon: Icon, color }) => {
+            const colors = { 
+                blue: "bg-blue-600", 
+                indigo: "bg-indigo-600", 
+                emerald: "bg-emerald-600", 
+                purple: "bg-purple-600" 
+            };
+
+            // Calculate Trend
+            let trend = 0;
+            let trendIcon = <Icons.Minus className="w-3 h-3" />;
+            let trendColor = "text-slate-400";
+            let trendText = "Stabil";
+
+            if (value && prevValue && prevValue !== "0.0%" && value !== "0.0%") {
+                const valNum = parseFloat(value);
+                const prevNum = parseFloat(prevValue);
+                trend = valNum - prevNum;
+
+                if (trend > 0.09) {
+                    trendIcon = <Icons.TrendingUp className="w-3 h-3" />;
+                    trendColor = "text-emerald-500";
+                    trendText = `+${trend.toFixed(1)}%`;
+                } else if (trend < -0.09) {
+                    trendIcon = <Icons.TrendingDown className="w-3 h-3" />;
+                    trendColor = "text-rose-500";
+                    trendText = `${trend.toFixed(1)}%`;
+                }
+            } else if (!prevValue || prevValue === "0.0%") {
+                trendText = "No Prev Data";
+            }
+
             return (
-                <div className="bg-white rounded-2xl p-5 shadow-card hover:shadow-lg transition-all duration-300 border border-slate-100 group relative overflow-hidden">
-                    <div className="flex items-start justify-between relative z-10">
-                        <div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{title}</p><h3 className="text-2xl font-bold text-slate-800 tracking-tight">{value}</h3></div>
-                        <div className={`p-3 rounded-xl shadow-lg text-white bg-gradient-to-br ${colors[color]} ${shadow[color]} transform group-hover:scale-110 transition-transform duration-300`}><Icon className="w-5 h-5" /></div>
+                <div className="bg-white rounded-xl p-5 shadow-card hover:shadow-lg transition-all duration-300 border border-slate-100 group relative overflow-hidden">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className={`p-2.5 rounded-xl shadow-md text-white ${colors[color] || colors.blue}`}>
+                            <Icon className="w-5 h-5" />
+                        </div>
+                        <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-slate-50 ${trendColor}`}>
+                            {trendIcon}
+                            <span>{trendText}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{title}</p>
+                        <h3 className="text-2xl font-extrabold text-slate-800 tracking-tight">{value}</h3>
+                        <p className="text-[10px] text-slate-400 mt-1">vs periode lalu {prevValue !== "0.0%" ? `(${prevValue})` : ""}</p>
                     </div>
                 </div>
             );
@@ -181,6 +223,7 @@
                 if (!canvasRef.current || !data) return;
                 const ctx = canvasRef.current.getContext('2d');
                 if (chartRef.current) chartRef.current.destroy();
+                
                 const valueOnPointsPlugin = {
                     id: 'valueOnPoints',
                     afterDatasetsDraw(chart) {
@@ -195,10 +238,9 @@
                                         ctx.font = 'bold 10px Inter';
                                         const textWidth = ctx.measureText(text).width;
                                         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                                        ctx.shadowColor = 'rgba(0,0,0,0.1)'; ctx.shadowBlur = 4;
                                         ctx.fillRect(element.x - textWidth/2 - 4, element.y - 26, textWidth + 8, 18);
-                                        ctx.shadowBlur = 0;
-                                        ctx.fillStyle = '#1e293b'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                                        ctx.fillStyle = '#1e293b'; 
+                                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                                         ctx.fillText(text, element.x, element.y - 17);
                                     }
                                 });
@@ -214,10 +256,7 @@
                         layout: { padding: { top: 30, right: 15, left: 5, bottom: 5 } },
                         interaction: { mode: 'index', intersect: false },
                         plugins: { legend: { display: false }, tooltip: { enabled: false } }, 
-                        scales: { 
-                            x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11}, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } }, 
-                            y: { display: false, min: 0, max: 120 } 
-                        },
+                        scales: { x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11}, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } }, y: { display: false, min: 0, max: 120 } },
                         elements: { line: { tension: 0.4 } }
                     },
                     plugins: [valueOnPointsPlugin] 
@@ -245,16 +284,19 @@
             if (!data) return null;
             return (
                 <div className="bg-white p-6 rounded-2xl shadow-card border border-slate-100 h-full flex flex-col">
-                    <div className="mb-5 flex items-center gap-3">
-                        <div className="bg-purple-50 p-2 rounded-lg"><Icons.Activity className="w-5 h-5 text-purple-600" /></div>
-                        <div><h4 className="text-sm font-bold text-slate-800">Opcode Summary</h4><p className="text-xs text-slate-400 font-medium mt-0.5">Performance Breakdown</p></div>
+                    <div className="mb-4">
+                        <h4 className="text-sm font-bold text-slate-800">Opcode Summary</h4>
+                        <p className="text-xs text-slate-400 mt-0.5">Performance Breakdown (All Dates)</p>
                     </div>
-                    <div className="flex-1 flex flex-col justify-between min-h-0 space-y-3">
+                    <div className="flex-1 flex flex-col justify-between min-h-0 space-y-2">
                         {data.labels.map((label, idx) => {
                             const value = data.values[idx]; const color = data.colors[idx];
                             return (
                                 <div key={idx} className="group w-full">
-                                    <div className="flex justify-between items-end mb-2"><span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800 transition-colors uppercase tracking-wide">{label}</span><span className="text-xs font-bold text-slate-700">{value.toFixed(1)}%</span></div>
+                                    <div className="flex justify-between items-end mb-1">
+                                        <span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800 transition-colors uppercase tracking-wide">{label}</span>
+                                        <span className="text-xs font-bold text-slate-700">{value.toFixed(1)}%</span>
+                                    </div>
                                     <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden ring-1 ring-slate-100"><div className="h-full rounded-full transition-all duration-1000 ease-out shadow-sm relative group-hover:opacity-90" style={{ width: `${Math.min(value, 100)}%`, backgroundColor: color }}></div></div>
                                 </div>
                             );
@@ -266,41 +308,69 @@
 
         const PerformanceTable = ({ title, data, labelColName, colorScheme = "blue" }) => {
             if (!data) return null;
-            const accents = { blue: "text-blue-700 border-blue-100 bg-blue-50/50", indigo: "text-indigo-700 border-indigo-100 bg-indigo-50/50", emerald: "text-emerald-700 border-emerald-100 bg-emerald-50/50", purple: "text-purple-700 border-purple-100 bg-purple-50/50" };
+            const styles = {
+                blue: { bg: "bg-blue-600", text: "text-white" },
+                indigo: { bg: "bg-indigo-600", text: "text-white" },
+                emerald: { bg: "bg-emerald-600", text: "text-white" },
+                purple: { bg: "bg-purple-600", text: "text-white" }
+            };
+            const s = styles[colorScheme];
             const Icon = title.includes("Inbound") ? Icons.Truck : (title.includes("Outbound") ? Icons.Cloud : (title.includes("Intra") ? Icons.Home : Icons.Activity));
             return (
                 <div className="h-full flex flex-col animate-fade-in bg-white rounded-2xl shadow-card border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div className={`px-5 py-4 border-b flex items-center gap-3 ${accents[colorScheme]}`}><Icon className={`w-4 h-4 opacity-80`} /><h3 className="text-xs font-extrabold uppercase tracking-widest">{title}</h3></div>
+                    <div className={`px-5 py-4 border-b flex items-center gap-3 ${s.bg} ${s.text}`}>
+                        <div className="p-1.5 bg-white/20 rounded-lg"><Icon className="w-4 h-4 text-white" /></div>
+                        <h3 className="text-xs font-extrabold uppercase tracking-widest text-white">{title}</h3>
+                    </div>
                     <div className="flex-1 overflow-auto custom-scroll">
                         <table className="w-full text-xs text-slate-700">
                             <thead>
-                                <tr className="bg-white border-b border-slate-100 shadow-sm">
-                                    <th className="px-3 py-2.5 text-left font-bold text-slate-400 uppercase tracking-wider sticky left-0 z-10 bg-white border-r border-slate-100">{labelColName}</th>
-                                    {data.hubs.map(hub => <th key={hub} className={`px-3 py-2.5 text-center font-bold text-slate-400 uppercase tracking-wider min-w-[60px] ${hub === 'TOTAL' ? 'bg-slate-50/80' : ''}`}>{hub}</th>)}
+                                <tr className="bg-slate-900 border-b border-slate-800">
+                                    <th className="px-3 py-3 text-left font-bold text-white uppercase tracking-wider sticky left-0 z-20 bg-slate-900 border-r border-slate-700 shadow-md">{labelColName}</th>
+                                    {data.hubs.map(hub => <th key={hub} className={`px-3 py-3 text-center font-bold text-white uppercase tracking-wider min-w-[60px] ${hub === 'TOTAL' ? 'bg-slate-900 border-l border-slate-700' : ''}`}>{hub}</th>)}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
+                            <tbody className="divide-y divide-slate-100">
                                 {data.metrics.map((metric, idx) => {
-                                    const isAvgRow = metric.label === "TOTAL AVERAGE";
-                                    const rowClass = isAvgRow ? "bg-slate-50/80 font-bold" : "hover:bg-slate-50/60 transition-colors";
+                                    const isTotalRow = metric.label === "TOTAL AVERAGE";
+                                    const rowClass = isTotalRow ? "bg-slate-900 font-bold text-white" : "hover:bg-slate-50 transition-colors";
                                     const isRef = metric.isReference;
-                                    const labelClass = isRef ? "bg-slate-800 text-white font-bold shadow-md" : "font-semibold text-slate-600 bg-white";
+                                    let labelClass = isTotalRow ? "bg-slate-900 text-white" : "font-medium text-slate-600 bg-white";
                                     return (
                                         <tr key={idx} className={rowClass}>
-                                            <td className={`px-3 py-3 sticky left-0 z-10 border-r border-slate-100 ${labelClass} ${isAvgRow ? '!bg-slate-50 !text-slate-800' : ''}`}>{metric.label}</td>
+                                            <td className={`px-3 py-3 sticky left-0 z-10 border-r border-slate-100 ${labelClass}`}>
+                                                {metric.label}
+                                            </td>
                                             {data.hubs.map(hub => {
                                                 const hubData = data.grouped[hub] || {};
                                                 const isTotalCol = hub === 'TOTAL';
+                                                let cellClass = "";
+                                                if (isTotalRow) cellClass = "bg-slate-900 text-white border-slate-700";
+                                                else if (isTotalCol) cellClass = "bg-slate-900 text-white font-bold border-l border-slate-700";
+                                                else cellClass = "text-slate-600";
+                                                
                                                 let content = null;
-                                                if (metric.isSum) { content = <span className="font-bold text-slate-700 font-mono tracking-tight">{(hubData[metric.key] || 0).toLocaleString('id-ID')}</span>; } 
-                                                else {
+                                                if (metric.isSum) { 
+                                                    content = <span className="font-mono tracking-tight">{(hubData[metric.key] || 0).toLocaleString('id-ID')}</span>; 
+                                                } else {
                                                     let num = 0, den = 0;
                                                     if (typeof metric.calc === 'function') { const res = metric.calc(hubData); num = res.num; den = res.den; } 
                                                     else { num = hubData[metric.keyNum] || 0; den = hubData[metric.keyDen] || 0; }
-                                                    if (den > 0) { const pct = ((num / den) * 100).toFixed(1) + "%"; content = <Badge value={pct} isReference={isRef} />; } 
-                                                    else { content = <span className="text-slate-300">-</span>; }
+                                                    if (den > 0) { 
+                                                        const pct = ((num / den) * 100).toFixed(1) + "%"; 
+                                                        if (isTotalRow || isTotalCol) {
+                                                            let textColor = "text-white";
+                                                            const val = (num / den) * 100;
+                                                            if (val >= 98) textColor = "text-emerald-400";
+                                                            else if (val < 95) textColor = "text-rose-400";
+                                                            else textColor = "text-amber-400";
+                                                            content = <span className={textColor}>{pct}</span>;
+                                                        } else {
+                                                            content = <Badge value={pct} isReference={isRef} />; 
+                                                        }
+                                                    } else { content = <span className="text-slate-400/50">-</span>; }
                                                 }
-                                                return <td key={hub} className={`px-3 py-2 text-center ${isTotalCol ? 'bg-slate-50/40' : ''} ${isAvgRow ? '!bg-slate-100' : ''}`}>{content}</td>;
+                                                return <td key={hub} className={`px-3 py-2 text-center ${cellClass}`}>{content}</td>;
                                             })}
                                         </tr>
                                     );
@@ -315,6 +385,7 @@
         const App = () => {
             const [rawData, setRawData] = useState([]);
             const [filteredData, setFilteredData] = useState([]);
+            const [prevPeriodData, setPrevPeriodData] = useState([]); // State for previous period comparison
             const [user, setUser] = useState(null);
             const [isUploading, setIsUploading] = useState(false);
             const [isFetching, setIsFetching] = useState(true); 
@@ -326,7 +397,9 @@
 
             const showNotification = (message, type = 'info') => setNotification({ message, type });
 
-            // Auth & Fetch
+            // Helper for formatted date YYYY-MM-DD
+            const formatDate = (date) => date.toISOString().split('T')[0];
+
             useEffect(() => {
                 const init = async () => {
                     const auth = window.fbAuth;
@@ -341,8 +414,25 @@
                             let rows = []; s.forEach(d => { if (d.data().rows) rows.push(...d.data().rows); });
                             if (rows.length) {
                                 rows.sort((a,b) => a.date.localeCompare(b.date)); setRawData(rows);
-                                const d = [...new Set(rows.map(x=>x.date))].sort(); 
-                                setStartDate(prev=>prev||d[0]); setEndDate(prev=>prev||d[d.length-1]);
+                                const uniqueDates = [...new Set(rows.map(x=>x.date))].sort();
+                                
+                                // Default Filter Logic: Last 30 Days relative to today (or latest data)
+                                const today = new Date();
+                                const thirtyDaysAgo = new Date();
+                                thirtyDaysAgo.setDate(today.getDate() - 30);
+
+                                // If latest data is far in the past, use latest data range. Otherwise use Today.
+                                // Let's use latest data date as 'end' to ensure data shows up if today has no data yet.
+                                const latestDataDate = new Date(uniqueDates[uniqueDates.length-1]);
+                                const end = formatDate(latestDataDate);
+                                
+                                const startObj = new Date(latestDataDate);
+                                startObj.setDate(startObj.getDate() - 29); // 30 days inclusive
+                                const start = formatDate(startObj);
+
+                                // Only set if not already set (to preserve user selection on refresh if persisted, but here reset is safer)
+                                setStartDate(start);
+                                setEndDate(end);
                             } else setRawData([]);
                             setIsFetching(false);
                         }, e => { console.error(e); showNotification("Sync Error: " + e.message, "error"); setIsFetching(false); });
@@ -375,16 +465,11 @@
                         const get = k => r[Object.keys(r).find(x=>x.toLowerCase().trim()===k.toLowerCase())];
                         const get31 = () => { let k = Object.keys(r).find(x => x.toLowerCase().includes('31') && x.toLowerCase().includes('delivery')); if (!k) k = Object.keys(r).find(x => x.trim() === '31'); return k ? parseInt(r[k] || 0, 10) : 0; };
                         const p = String(get('pickup_hub')||"").trim().toUpperCase(), d = String(get('delivery_hub')||"").trim().toUpperCase();
-                        
-                        // NEW COLUMNS LOGIC
-                        const platform = String(get('platform')||"").trim();
-                        const service = String(get('Service')||"").trim();
-
+                        const platform = String(get('platform')||"").trim(); const service = String(get('Service')||"").trim();
                         if(p && d) {
                             const num = k => { let v=get(k); if(v===undefined)v=r[k]; return parseInt(v||0,10); };
                             proc.push({
-                                date: dateStr, pickup_hub:p, delivery_hub:d, isGateway:p!==d, 
-                                platform, service, // Added here
+                                date: dateStr, pickup_hub:p, delivery_hub:d, isGateway:p!==d, platform, service,
                                 val_80:num('80'), val_407:num('407'), val_43:num('43'), val_643:num('643'), 
                                 val_82:num('82'), val_83:num('83'), val_41:num('41'), val_31:get31(), 
                                 val_603:num('603'), val_618:num('618'), val_640:num('640')
@@ -398,39 +483,112 @@
                     const grp = {}; proc.forEach(r=>{ if(!grp[r.date])grp[r.date]=[]; grp[r.date].push(r); });
                     await Promise.all(Object.keys(grp).map(k=>window.fbSetDoc(window.fbDoc(window.fbDb,'artifacts',window.fbAppId,'users',user.uid,'daily_data',k),{date:k,rows:grp[k]},{merge:true})));
                     showNotification("Upload Berhasil! Data baru tersimpan.", "success");
-                    const dates=Object.keys(grp).sort(); if(!startDate)setStartDate(dates[0]); if(!endDate)setEndDate(dates[dates.length-1]);
+                    
+                    // Force Refresh dates if needed
+                    const dates=Object.keys(grp).sort();
+                    if (!startDate) {
+                         setStartDate(dates[0]); setEndDate(dates[dates.length-1]);
+                    }
                 } catch(e) { console.error(e); showNotification(e.message, "error"); } finally { setIsUploading(false); }
             };
 
+            // Main Filter Effect + Previous Period Logic
             useEffect(() => { 
-                if(rawData.length) {
-                    const dts = rawData.map(d=>d.date).sort();
-                    const s = startDate || dts[0];
-                    const e = endDate || dts[dts.length-1];
-                    setFilteredData(rawData.filter(d => (!d.date || d.date==="Unknown") ? true : (d.date >= s && d.date <= e))); 
+                if(rawData.length === 0) return;
+
+                // 1. Current Filter
+                const currentFiltered = rawData.filter(d => (!d.date || d.date==="Unknown") ? true : (d.date >= startDate && d.date <= endDate));
+                setFilteredData(currentFiltered);
+
+                // 2. Calculate Previous Period Range
+                if (startDate && endDate) {
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    const duration = (end - start) / (1000 * 60 * 60 * 24) + 1; // days count
+                    
+                    const prevEndObj = new Date(start);
+                    prevEndObj.setDate(prevEndObj.getDate() - 1);
+                    const prevStartObj = new Date(prevEndObj);
+                    prevStartObj.setDate(prevStartObj.getDate() - duration + 1);
+
+                    const prevStartStr = formatDate(prevStartObj);
+                    const prevEndStr = formatDate(prevEndObj);
+
+                    const prevFiltered = rawData.filter(d => d.date >= prevStartStr && d.date <= prevEndStr);
+                    setPrevPeriodData(prevFiltered);
+                } else {
+                    setPrevPeriodData([]);
                 }
             }, [startDate, endDate, rawData]);
 
             // Aggregation Helpers
-            const prepTbl = (ds, f, flt) => {
-                if(!ds.length) return null; const hs = selectedHub==="All"?['MKS','BPP','BJM','MND','PLK']: [selectedHub]; const g={}; [...hs,'TOTAL'].forEach(h=>g[h]={v80:0,v643:0,v82:0,v83:0,v41:0,v31:0,v603:0,v618:0,v640:0,v407:0,v43:0});
-                ds.forEach(r=>{ if(flt&&!flt(r))return; if(hs.includes(r[f])){ const h=g[r[f]],t=g['TOTAL']; ['v80','v643','v82','v83','v41','v31','v603','v618','v640','v407','v43'].forEach(k=>{const v=r['val_'+k.substring(1)];h[k]+=v;t[k]+=v}); } });
-                return { hubs:[...hs,'TOTAL'], grouped:g };
+            const prepTbl = (ds, f, flt, includeTotal = true) => {
+                if(!ds.length) return null; 
+                const hs = selectedHub==="All"?['MKS','BPP','BJM','MND','PLK']: [selectedHub]; 
+                const g={}; 
+                const hubsToInit = includeTotal ? [...hs, 'TOTAL'] : hs;
+                hubsToInit.forEach(h=>g[h]={v80:0,v643:0,v82:0,v83:0,v41:0,v31:0,v603:0,v618:0,v640:0,v407:0,v43:0});
+                ds.forEach(r=>{ 
+                    if(flt&&!flt(r))return; 
+                    if(hs.includes(r[f])){ 
+                        const h=g[r[f]];
+                        ['v80','v643','v82','v83','v41','v31','v603','v618','v640','v407','v43'].forEach(k=>{
+                            const v=r['val_'+k.substring(1)]; h[k]+=v;
+                            if (includeTotal) { const t=g['TOTAL']; t[k]+=v; }
+                        }); 
+                    } 
+                });
+                return { hubs: hubsToInit, grouped:g };
             };
+
             const sumLog = (ds) => {
                 const hs = selectedHub==="All"?['MKS','BPP','BJM','MND','PLK']: [selectedHub]; const g={}; [...hs,'TOTAL'].forEach(h=>g[h]={inbound:{v80:0,v603:0,v618:0,v640:0,v83:0,v41:0,v82:0},outbound:{v80:0,v407:0,v43:0,v603:0,v618:0,v643:0,v82:0},intra:{v80:0,v407:0,v43:0,v603:0,v618:0,v640:0}});
                 ds.forEach(r=>{ const add=(h,t,ks)=>{if(hs.includes(h))ks.forEach(k=>{const v=r['val_'+k.substring(1)];g[h][t][k]+=v;g['TOTAL'][t][k]+=v})}; if(r.isGateway){add(r.pickup_hub,'outbound',['v80','v407','v43','v603','v618','v643','v82']);add(r.delivery_hub,'inbound',['v80','v603','v618','v640','v83','v41','v82'])}else add(r.pickup_hub,'intra',['v80','v407','v43','v603','v618','v640'])});
                 return g;
             };
-            const sumMets = [ { label: "Aver % 407", color: '#ef4444', calc: d => ({ num: d.outbound.v407+d.intra.v407, den: d.outbound.v80+d.intra.v80 }) }, { label: "Aver % 43", color: '#f97316', calc: d => ({ num: d.outbound.v43+d.intra.v43, den: d.outbound.v80+d.intra.v80 }) }, { label: "Aver % 603", color: '#eab308', calc: d => ({ num: d.inbound.v603+d.outbound.v603+d.intra.v603, den: d.inbound.v80+d.outbound.v80+d.intra.v80 }) }, { label: "Aver % 618", color: '#84cc16', calc: d => ({ num: d.inbound.v618+d.outbound.v618+d.intra.v618, den: d.inbound.v80+d.outbound.v80+d.intra.v80 }) }, { label: "Aver % 640", color: '#10b981', calc: d => ({ num: d.inbound.v640+d.intra.v640, den: d.inbound.v80+d.intra.v80 }) }, { label: "Aver % 643", color: '#06b6d4', calc: d => ({ num: d.outbound.v643, den: d.outbound.v80 }) }, { label: "Aver % 82", color: '#3b82f6', calc: d => ({ num: d.outbound.v82, den: d.outbound.v643 }) }, { label: "Aver % 83", color: '#6366f1', calc: d => ({ num: d.inbound.v83, den: d.inbound.v82 }) }, { label: "Aver % 41", color: '#8b5cf6', calc: d => ({ num: d.inbound.v41, den: d.inbound.v82 }) }, { label: "TOTAL AVERAGE", color: '#1e293b', calc: d => { const p = (n, de) => de > 0 ? n/de : 0; const vs=[p(d.outbound.v407+d.intra.v407,d.outbound.v80+d.intra.v80),p(d.outbound.v43+d.intra.v43,d.outbound.v80+d.intra.v80),p(d.inbound.v603+d.outbound.v603+d.intra.v603,d.inbound.v80+d.outbound.v80+d.intra.v80),p(d.inbound.v618+d.outbound.v618+d.intra.v618,d.inbound.v80+d.outbound.v80+d.intra.v80),p(d.inbound.v640+d.intra.v640,d.inbound.v80+d.intra.v80),p(d.outbound.v643,d.outbound.v80),p(d.outbound.v82,d.outbound.v643),p(d.inbound.v83,d.inbound.v82),p(d.inbound.v41,d.inbound.v82)]; return { num: vs.reduce((a,c)=>a+c,0)/9, den: 1 }; } } ];
+            const sumMets = [ { label: "407", color: '#ef4444', calc: d => ({ num: d.outbound.v407+d.intra.v407, den: d.outbound.v80+d.intra.v80 }) }, { label: "43", color: '#f97316', calc: d => ({ num: d.outbound.v43+d.intra.v43, den: d.outbound.v80+d.intra.v80 }) }, { label: "603", color: '#eab308', calc: d => ({ num: d.inbound.v603+d.outbound.v603+d.intra.v603, den: d.inbound.v80+d.outbound.v80+d.intra.v80 }) }, { label: "618", color: '#84cc16', calc: d => ({ num: d.inbound.v618+d.outbound.v618+d.intra.v618, den: d.inbound.v80+d.outbound.v80+d.intra.v80 }) }, { label: "640", color: '#10b981', calc: d => ({ num: d.inbound.v640+d.intra.v640, den: d.inbound.v80+d.intra.v80 }) }, { label: "643", color: '#06b6d4', calc: d => ({ num: d.outbound.v643, den: d.outbound.v80 }) }, { label: "82", color: '#3b82f6', calc: d => ({ num: d.outbound.v82, den: d.outbound.v643 }) }, { label: "83", color: '#6366f1', calc: d => ({ num: d.inbound.v83, den: d.inbound.v82 }) }, { label: "41", color: '#8b5cf6', calc: d => ({ num: d.inbound.v41, den: d.inbound.v82 }) }, { label: "TOTAL AVERAGE", color: '#1e293b', calc: d => { const p = (n, de) => de > 0 ? n/de : 0; const vs=[p(d.outbound.v407+d.intra.v407,d.outbound.v80+d.intra.v80),p(d.outbound.v43+d.intra.v43,d.outbound.v80+d.intra.v80),p(d.inbound.v603+d.outbound.v603+d.intra.v603,d.inbound.v80+d.outbound.v80+d.intra.v80),p(d.inbound.v618+d.outbound.v618+d.intra.v618,d.inbound.v80+d.outbound.v80+d.intra.v80),p(d.inbound.v640+d.intra.v640,d.inbound.v80+d.intra.v80),p(d.outbound.v643,d.outbound.v80),p(d.outbound.v82,d.outbound.v643),p(d.inbound.v83,d.inbound.v82),p(d.inbound.v41,d.inbound.v82)]; return { num: vs.reduce((a,c)=>a+c,0)/9, den: 1 }; } } ];
             
-            const inData = useMemo(() => { const b=prepTbl(filteredData,'delivery_hub',r=>r.isGateway); if(!b)return null; b.metrics=[{ label: "Aver % 643", keyNum: 'v643', keyDen: 'v80', isReference: true }, { label: "Aver % 82", keyNum: 'v82', keyDen: 'v643', isReference: true }, { label: "Aver % 83", keyNum: 'v83', keyDen: 'v82' }, { label: "Aver % 41", keyNum: 'v41', keyDen: 'v82' }, { label: "Aver % 603", keyNum: 'v603', keyDen: 'v80' }, { label: "Aver % 618", keyNum: 'v618', keyDen: 'v80' }, { label: "Aver % 640", keyNum: 'v640', keyDen: 'v80' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
-            const outData = useMemo(() => { const b=prepTbl(filteredData,'pickup_hub',r=>r.isGateway); if(!b)return null; b.metrics=[{ label: "Aver % 407", keyNum: 'v407', keyDen: 'v80', isReference: true }, { label: "Aver % 43", keyNum: 'v43', keyDen: 'v80' }, { label: "Aver % 603", keyNum: 'v603', keyDen: 'v80' }, { label: "Aver % 618", keyNum: 'v618', keyDen: 'v80' }, { label: "Aver % 643", keyNum: 'v643', keyDen: 'v80' }, { label: "Aver % 82", keyNum: 'v82', keyDen: 'v643' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
-            const intData = useMemo(() => { const b=prepTbl(filteredData,'pickup_hub',r=>!r.isGateway); if(!b)return null; b.metrics=[{ label: "Aver % 407", keyNum: 'v407', keyDen: 'v80', isReference: true }, { label: "Aver % 43", keyNum: 'v43', keyDen: 'v80' }, { label: "Aver % 603", keyNum: 'v603', keyDen: 'v80' }, { label: "Aver % 618", keyNum: 'v618', keyDen: 'v80' }, { label: "Aver % 640", keyNum: 'v640', keyDen: 'v80' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
+            // --- METRICS ---
+            const inData = useMemo(() => { const b=prepTbl(filteredData,'delivery_hub',r=>r.isGateway, false); if(!b)return null; b.metrics=[{ label: "643", keyNum: 'v643', keyDen: 'v80', isReference: true }, { label: "82", keyNum: 'v82', keyDen: 'v643', isReference: true }, { label: "83", keyNum: 'v83', keyDen: 'v82' }, { label: "41", keyNum: 'v41', keyDen: 'v82' }, { label: "603", keyNum: 'v603', keyDen: 'v80' }, { label: "618", keyNum: 'v618', keyDen: 'v80' }, { label: "640", keyNum: 'v640', keyDen: 'v80' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
+            const outData = useMemo(() => { const b=prepTbl(filteredData,'pickup_hub',r=>r.isGateway, false); if(!b)return null; b.metrics=[{ label: "407", keyNum: 'v407', keyDen: 'v80', isReference: true }, { label: "43", keyNum: 'v43', keyDen: 'v80' }, { label: "603", keyNum: 'v603', keyDen: 'v80' }, { label: "618", keyNum: 'v618', keyDen: 'v80' }, { label: "643", keyNum: 'v643', keyDen: 'v80' }, { label: "82", keyNum: 'v82', keyDen: 'v643' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
+            const intData = useMemo(() => { const b=prepTbl(filteredData,'pickup_hub',r=>!r.isGateway, false); if(!b)return null; b.metrics=[{ label: "407", keyNum: 'v407', keyDen: 'v80', isReference: true }, { label: "43", keyNum: 'v43', keyDen: 'v80' }, { label: "603", keyNum: 'v603', keyDen: 'v80' }, { label: "618", keyNum: 'v618', keyDen: 'v80' }, { label: "640", keyNum: 'v640', keyDen: 'v80' }, { label: "SUM of 80", isSum: true, key: 'v80' }]; return b; }, [filteredData, selectedHub]);
             
             const sumData = useMemo(() => { if(!filteredData.length)return null; const hs=selectedHub==="All"?['MKS','BPP','BJM','MND','PLK']:[selectedHub]; return { hubs:hs, grouped:sumLog(filteredData), metrics:sumMets }; }, [filteredData, selectedHub]);
-            const kpi = useMemo(() => { if(!sumData)return null; const t=sumLog(filteredData)['TOTAL'], c=l=>{const m=sumMets.find(x=>x.label===l);if(!m)return"0.0%";const r=m.calc(t);return r.den>0?((r.num/r.den)*100).toFixed(1)+"%":"0.0%"}; return { tot:c("TOTAL AVERAGE"), in:c("Aver % 643"), out:c("Aver % 407"), intra:c("Aver % 640") }; }, [filteredData]);
             
+            // --- KPI COMPARISON LOGIC ---
+            const kpi = useMemo(() => { 
+                if(!sumData) return null; 
+                
+                // Helper to get average percentage from a dataset (current or previous)
+                const getAvg = (ds, metricLabel) => {
+                    if (!ds || ds.length === 0) return "0.0%";
+                    const t = sumLog(ds)['TOTAL'];
+                    const m = sumMets.find(x => x.label === metricLabel);
+                    if(!m) return "0.0%";
+                    const r = m.calc(t);
+                    return r.den > 0 ? ((r.num/r.den)*100).toFixed(1) + "%" : "0.0%";
+                };
+
+                // Current Period Values
+                const currTotal = getAvg(filteredData, "TOTAL AVERAGE");
+                const currIn = getAvg(filteredData, "643");
+                const currOut = getAvg(filteredData, "407");
+                const currIntra = getAvg(filteredData, "640");
+
+                // Previous Period Values
+                const prevTotal = getAvg(prevPeriodData, "TOTAL AVERAGE");
+                const prevIn = getAvg(prevPeriodData, "643");
+                const prevOut = getAvg(prevPeriodData, "407");
+                const prevIntra = getAvg(prevPeriodData, "640");
+
+                return { 
+                    tot: { val: currTotal, prev: prevTotal },
+                    in: { val: currIn, prev: prevIn },
+                    out: { val: currOut, prev: prevOut },
+                    intra: { val: currIntra, prev: prevIntra }
+                }; 
+            }, [filteredData, prevPeriodData]); // Depends on both datasets
+
             const chart = useMemo(() => { 
                 if(!filteredData.length)return{t:null,b:null}; 
                 let labels = [], tDs={label:'Total Avg',borderColor:'#3b82f6',backgroundColor:'#3b82f6',tension:0.3,pointRadius:3,borderWidth:3,fill:false,data:[]};
@@ -448,16 +606,16 @@
                         Object.keys(mGrps).sort((a,b)=>a-b).forEach(m => { labels.push(months[m]); tDs.data.push(tAvg.calc(sumLog(mGrps[m])['TOTAL']).den>0?(tAvg.calc(sumLog(mGrps[m])['TOTAL']).num/tAvg.calc(sumLog(mGrps[m])['TOTAL']).den)*100:0); });
                     }
                 }
-                const totG=sumLog(filteredData)['TOTAL']; const opMetrics = sumMets.filter(x => x.label !== "TOTAL AVERAGE" && x.label !== "Aver % 407"); const b={labels:[],values:[],colors:[]}; 
+                const totG=sumLog(filteredData)['TOTAL']; const opMetrics = sumMets.filter(x => x.label !== "TOTAL AVERAGE" && x.label !== "407"); const b={labels:[],values:[],colors:[]}; 
                 opMetrics.forEach(m=>{ b.labels.push(m.label.replace('Aver % ','')); const r=m.calc(totG); const v=r.den>0?(r.num/r.den)*100:0; b.values.push(v); let c='#d97706'; if(v>=98)c='#059669'; else if(v<95)c='#e11d48'; b.colors.push(c); });
                 return { t:{labels,datasets:[tDs]}, b }; 
             }, [filteredData, rawData, selectedHub, chartMode]);
 
             return (
-                <div className="min-h-screen pb-10">
+                <div className="min-h-screen pb-10 w-full overflow-x-hidden">
                     {notification && <ToastNotification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
                     <div className="sticky top-0 z-50 w-full bg-slate-900/90 backdrop-blur-md shadow-lg border-b border-slate-800 transition-all duration-300">
-                        <div className="w-full px-6 lg:px-8 h-16 flex items-center justify-between">
+                        <div className="w-full px-4 lg:px-8 h-16 flex items-center justify-between">
                             <div className="flex items-center gap-3 group"><div className="bg-gradient-to-br from-brand-500 to-brand-700 p-2 rounded-xl shadow-glow transition-all group-hover:scale-105"><Icons.Activity className="w-5 h-5 text-white" /></div><div><h1 className="text-lg font-bold text-white tracking-tight leading-tight">Executive Dashboard</h1><p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Opcode Analytics</p></div></div>
                             <div className="flex items-center gap-4">
                                 {user ? ( <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-full border border-emerald-400/20 shadow-sm"><div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>System Online</div> ) : ( <div className="flex items-center gap-2 text-xs text-slate-500"><div className="spinner border-slate-500 border-t-transparent w-3 h-3"></div> Connecting...</div> )}
@@ -470,7 +628,7 @@
                         </div>
                     </div>
 
-                    <div className="w-full px-6 lg:px-8 py-8 space-y-8">
+                    <div className="w-full px-4 lg:px-8 py-8 space-y-8">
                         {rawData.length > 0 && (
                             <div className="bg-white/80 backdrop-blur-xl p-1.5 rounded-2xl border border-white shadow-soft flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in sticky top-20 z-40 ring-1 ring-slate-900/5">
                                 <div className="flex flex-wrap items-center gap-2 w-full md:w-auto p-2">
@@ -494,7 +652,14 @@
                             </div>
                         )}
 
-                        {kpi && ( <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-fade-in" style={{animationDelay: '100ms'}}> <KPICard title="Total Visibility" value={kpi.tot} icon={Icons.Activity} color="indigo" /> <KPICard title="Inbound (Arr Scn)" value={kpi.in} icon={Icons.Truck} color="blue" /> <KPICard title="Outbound (Pup Scn)" value={kpi.out} icon={Icons.Cloud} color="purple" /> <KPICard title="Intra City (Dlv Scn)" value={kpi.intra} icon={Icons.Home} color="emerald" /> </div> )}
+                        {kpi && ( 
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-fade-in" style={{animationDelay: '100ms'}}> 
+                                <KPICard title="Total Visibility" value={kpi.tot.val} prevValue={kpi.tot.prev} icon={Icons.Activity} color="indigo" /> 
+                                <KPICard title="Inbound (Arr Scn)" value={kpi.in.val} prevValue={kpi.in.prev} icon={Icons.Truck} color="blue" /> 
+                                <KPICard title="Outbound (Pup Scn)" value={kpi.out.val} prevValue={kpi.out.prev} icon={Icons.Cloud} color="purple" /> 
+                                <KPICard title="Intra City (Dlv Scn)" value={kpi.intra.val} prevValue={kpi.intra.prev} icon={Icons.Home} color="emerald" /> 
+                            </div> 
+                        )}
 
                         {chart.t && (
                             <div className="space-y-6 animate-fade-in" style={{animationDelay: '200ms'}}>
